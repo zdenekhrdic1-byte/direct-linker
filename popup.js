@@ -38,6 +38,38 @@ function updateUI() {
   });
 }
 
+// Funkce pro odstranění mezistránky a získání přímé URL
+async function getDirectUrl(url) {
+  try {
+    const response = await fetch(url, { 
+      method: 'HEAD', 
+      redirect: 'follow' 
+    });
+    return response.url; // Vrátí finální přímý odkaz (např. přímo na .rar / .zip)
+  } catch (error) {
+    // Pokud HEAD selže, zkusí GET
+    try {
+      const response = await fetch(url, { 
+        method: 'GET', 
+        redirect: 'follow' 
+      });
+      return response.url;
+    } catch (e) {
+      return url; // Při chybě vrátí původní URL
+    }
+  }
+}
+
+// Příklad použití při stahování/kopírování odkazu:
+async function handleDownload(originalUrl) {
+  const cleanDirectUrl = await getDirectUrl(originalUrl);
+  
+  // Nyní pošleš do FDM/stahovače už čistý přímý odkaz:
+  chrome.downloads.download({
+    url: cleanDirectUrl
+  });
+}
+
 function escapeHTML(str) {
   return str.replace(/[&<>'"]/g, 
     tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
