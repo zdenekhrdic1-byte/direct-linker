@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card-bg: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --secondary: #e2e8f0;
+      --secondary-hover: #cbd5e1;
+      --link: #2563eb;
+      --shadow: rgba(0, 0, 0, 0.05);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card-bg: #1e293b;
+        --text: #f8fafc;
+        --text-muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-hover: #60a5fa;
+        --danger: #f87171;
+        --danger-hover: #ef4444;
+        --secondary: #334155;
+        --secondary-hover: #475569;
+        --link: #60a5fa;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      width: 320px;
+      padding: 16px;
+      background-color: var(--bg);
+      color: var(--text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .app-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      object-fit: contain;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .status-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+      background: var(--secondary);
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .status-badge.recording {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; }
+      100% { opacity: 0.7; }
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    button:active {
+      transform: scale(0.96);
+    }
+
+    .btn-record {
+      flex: 1;
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+
+    .btn-record:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-record.stop {
+      background-color: var(--danger);
+    }
+
+    .btn-record.stop:hover {
+      background-color: var(--danger-hover);
+    }
+
+    .btn-clear {
+      background-color: var(--secondary);
+      color: var(--text);
+    }
+
+    .btn-clear:hover {
+      background-color: var(--secondary-hover);
+    }
+
+    .list-container {
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .list-container::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .list-container::-webkit-scrollbar-thumb {
+      background: var(--secondary-hover);
+      border-radius: 4px;
+    }
+
+    ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    li {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px var(--shadow);
+      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    li:hover {
+      transform: translateY(-2px);
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .file-name {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .file-url {
+      font-size: 11px;
+      color: var(--link);
+      text-decoration: none;
+      word-break: break-all;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .file-url:hover {
+      text-decoration: underline;
+    }
+
+    .file-time {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="header-left">
+      <img src="icon48.png" class="app-icon" alt="logo">
+      <span class="title">Direct Linker</span>
+    </div>
+    <span id="statusBadge" class="status-badge">Idle</span>
+  </div>
+
+  <div class="controls">
+    <button id="recordBtn" class="btn-record">Start Record</button>
+    <button id="clearBtn" class="btn-clear">Clear</button>
+  </div>
+
+  <div class="list-container">
+    <ul id="linkList"></ul>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
